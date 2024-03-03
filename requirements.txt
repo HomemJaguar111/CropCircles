@@ -1,2 +1,2 @@
-folium==0.15.1
-pandas==2.1.4
+folium
+pandas
