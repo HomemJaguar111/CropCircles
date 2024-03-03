@@ -1,7 +1,7 @@
 import streamlit as st
 import folium
 #from folium.plugins import Draw
-#from streamlit_folium import folium_static
+from streamlit_folium import folium_static
 import pandas as pd
 
 
@@ -37,8 +37,8 @@ def main():
         folium.Marker([la,lo], tooltip=c).add_to(m)       
     
     st.title("Mapa dos CropCircles")
-    return m
-    #folium_static(m)          
+    #return m
+    folium_static(m)          
     
 if __name__ == "__main__":
     main()
