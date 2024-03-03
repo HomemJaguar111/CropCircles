@@ -1,4 +1,4 @@
 folium
 pandas
 streamlit_folium
-folium_stati
+folium_static
