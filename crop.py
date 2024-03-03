@@ -1,9 +1,12 @@
+!pip install folium 
 import streamlit as st
 import folium
-from folium.plugins import MousePosition
 from folium.plugins import Draw
 from streamlit_folium import folium_static
 import pandas as pd
+
+
+
 
 def main():
     #Lendo os arquivos
@@ -32,13 +35,10 @@ def main():
     ############################################################
     #Mapa Crop 
     for c, la, lo in zip(loc, lat, lon):
-        folium.Marker([la,lo], tooltip=c).add_to(m)   
-        
-    
+        folium.Marker([la,lo], tooltip=c).add_to(m)       
     
     st.title("Mapa dos CropCircles")
-    folium_static(m)      
-    
+    folium_static(m)          
     
 if __name__ == "__main__":
     main()
