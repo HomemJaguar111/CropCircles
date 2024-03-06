@@ -1,3 +1,5 @@
 folium
 pandas
 streamlit_folium
+plotly.express
+plotly
