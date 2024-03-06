@@ -60,13 +60,8 @@ def main():
                   names=cropCountry.index, 
                   title='Crop Circles por país')
     
-    # Gráfico em Barra - Crops por Ano
-    
-    
+    # Gráfico em Barra - Crops por Ano     
     yearCrops = cropData[["Year","Country"]].value_counts().reset_index()
-    #yearCropsA = yearCrops.sort_values(by='Year',ascending=False )
-    #yearCropsA
-    yearCrops
     yearCropsBar = px.bar(yearCrops, 
                        x="Year",
                        y="count",
@@ -81,14 +76,13 @@ def main():
     #Título do site
     st.title("Localização dos Crop Circles")
     
-    #Mapa Principal
-    #return m
+    #Mapa Principal    
     folium_static(m)  
     #Gráfico em Pizza de Crops por País
     pieCountryCrops
     #Gráfico de Barras - Crops por Ano        
     yearCropsBar
-    #dataseet
+    #dataset
     cropData        
     ##################################################################
 if __name__ == "__main__":
