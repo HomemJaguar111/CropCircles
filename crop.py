@@ -20,12 +20,10 @@ diaA = tempo.day
     ##############################################    
 #Função que calcula o dia no Sincronário Maya    
 def Kin(ano, mes, dia):    
-
     anocod = 0
     mescod = 0
     diacod = 0
-    kin = 0
-    
+    kin = 0    
     
     if ano == 0 or ano % 52 == 0:
         anocod = 232
@@ -229,6 +227,16 @@ def Kin(ano, mes, dia):
         kin = codKin
         
     return kin
+def ElementKin(kin):
+    if kin == 1 or kin % 4 == 1:
+        element = "Fire"
+    elif kin == 2 or kin % 4 == 2:
+        element = "Air"
+    elif kin == 3 or kin % 4 == 3:
+        element = "Water"
+    elif kin == 4 or kin % 4 == 0:
+        element = "Ground"                        
+    return element
 def AngelsNum(mes, dia):
     angelNum = 0
     angelNam =''
@@ -281,7 +289,7 @@ def AngelsNum(mes, dia):
             
         elif mes == 4:
             angelNum = 14
-            a
+            
         elif mes == 5: 
             angelNum = 44
             
@@ -1602,7 +1610,8 @@ def AngelsNam(angelNum):
         angelNam ="Mumiah"
          
     return angelNam
-     
+
+
 def main():    
     
     #Lendo os arquivos
@@ -1628,13 +1637,14 @@ def main():
     
     #Coluna dos Kins Maya
     cropData["Kin"] = cropData.apply(lambda row: Kin(row["Year"], row["Month"], row["Day"]), axis=1)
+        
+    #Coluna dos Elementos Kin
+    cropData["Element Kin"] = cropData.apply(lambda row: ElementKin(row["Kin"]), axis=1)
     
-    #Coluna dos 72 anjos - Números
-    
+    #Coluna dos 72 anjos - Números    
     cropData["Angel Number"] = cropData.apply(lambda row: AngelsNum(row["Month"],row["Day"]), axis=1 )
     
-    #Coluna dos 72 anjos - Nomes
-    
+    #Coluna dos 72 anjos - Nomes    
     cropData["Angel Names"] = cropData.apply(lambda row: AngelsNam(row["Angel Number"]), axis=1 )
     
     #######################################################
@@ -1684,9 +1694,8 @@ def main():
     #Gráfico em Pizza de Crops por País
     pieCountryCrops
     #Gráfico de Barras - Crops por Ano        
-    yearCropsBar
-    #dataset
-    
+    yearCropsBar    
+    #dataset   
     cropData        
     ##################################################################
 if __name__ == "__main__":
