@@ -18,7 +18,7 @@ anoA = tempo.year
 mesA = tempo.month
 diaA = tempo.day       
     ##############################################    
-#Função que calcula o dia no Sincronário Maya    
+#Funções   
 def Kin(ano, mes, dia):    
     anocod = 0
     mescod = 0
@@ -237,6 +237,51 @@ def ElementKin(kin):
     elif kin == 4 or kin % 4 == 0:
         element = "Ground"                        
     return element
+def StampKin(kin):
+    if kin == 1 or kin % 20 == 1:
+        stamp = "Dragon"
+    elif kin == 2 or kin % 20 ==2: 
+        stamp = "Wind"
+    elif kin == 3 or kin % 20 == 3:
+        stamp = "Night"
+    elif kin == 4 or kin % 20 == 4: 
+        stamp = "Seed"
+    elif kin == 5 or kin % 20 == 5: 
+        stamp = "Serpent"
+    elif kin == 6 or kin % 20 == 6: 
+        stamp = "Link"
+    elif kin == 7 or kin % 20 == 7: 
+        stamp = "Hand"
+    elif kin == 8 or kin % 20 == 8: 
+        stamp = "Star"
+    elif kin ==  9 or kin % 20 == 9: 
+        stamp = "Moon"
+    elif kin == 10 or kin % 20 == 10: 
+        stamp = "Dog"
+    elif kin == 11 or kin % 20 == 11: 
+        stamp = "Monkey"
+    elif kin == 12 or kin % 20 == 12: 
+        stamp = "Human"
+    elif kin == 13 or kin % 20 == 13: 
+        stamp = "Sky Walker"
+    elif kin == 14 or kin % 20 == 14: 
+        stamp = "Wizard"
+    elif kin == 15 or kin % 20 == 15:
+        stamp = "Eagle"
+    elif kin == 16 or kin % 20 == 16: 
+        stamp = "Warrior"
+    elif kin == 17 or kin % 20 == 17:
+        stamp = "Earth"
+    elif kin == 18 or kin % 20 == 18:
+        stamp = "Mirror"
+    elif kin == 19 or kin % 20 == 19:
+        stamp = "Storm"
+    elif kin == 20 or kin % 20 == 0: 
+        stamp = "Sun"
+    
+    return stamp
+
+
 def AngelsNum(mes, dia):
     angelNum = 0
     angelNam =''
@@ -1613,12 +1658,20 @@ def AngelsNam(angelNum):
 
 
 def main():    
+    ###################################################
+    #Criando as tabelas    
     
-    #Lendo os arquivos
+    #Tabela CropCircles
     cropData= pd.read_csv('CropCircles.csv') 
+    
+   
+    
+    
     #Mapa Definido  ###############################################
     m = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community')  
+                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
+    mElement = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
     
     #Controle de Camadas
     #folium.LayerControl(position="topleft").add_to(m)
@@ -1641,6 +1694,9 @@ def main():
     #Coluna dos Elementos Kin
     cropData["Element Kin"] = cropData.apply(lambda row: ElementKin(row["Kin"]), axis=1)
     
+    #Coluna dos Selos Maia
+    cropData["Stamp"]= cropData.apply(lambda row: StampKin(row["Kin"]), axis=1)
+    
     #Coluna dos 72 anjos - Números    
     cropData["Angel Number"] = cropData.apply(lambda row: AngelsNum(row["Month"],row["Day"]), axis=1 )
     
@@ -1649,6 +1705,30 @@ def main():
     
     #######################################################
     
+    #Tabela elementos kin    
+    cropElements = cropData[["Kin","Element Kin","Stamp","Latitude","Longitude"]]
+    
+    #Tabela Fogo
+    cropFireTrue = (cropElements["Element Kin"] == "Fire")
+    cropFire = cropElements[cropFireTrue]
+    
+    #Tabela Ar
+    cropAirTrue = (cropElements["Element Kin"] == "Air")
+    cropAir = cropElements[cropAirTrue]
+    
+    #Tabela Água
+    cropWaterTrue = (cropElements["Element Kin"] == "Water")
+    cropWater = cropElements[cropWaterTrue]
+    
+    #Tabela Terra
+    cropGroundTrue = (cropElements["Element Kin"] == "Ground")
+    cropGround = cropElements[cropGroundTrue]
+    
+    
+    
+    
+    
+    ######################################################################
     #Adicionando função de calor no mapa
     coordTotal = cropData[["Latitude","Longitude"]].values.tolist()
     HeatMap(coordTotal, radius=52).add_to(m)
@@ -1657,12 +1737,73 @@ def main():
        
     ############################################################
     #Localizações dos Crops no mapa
-    for c, la, lo in zip(loc, lat, lon):
-        folium.Marker([la,lo], tooltip=c).add_to(m)       
+    locKin=cropData['Locate']
+    
+    latFire= cropFire['Latitude']
+    lonFire = cropFire['Longitude'] 
+    
+    latAir= cropAir['Latitude']
+    lonAir = cropAir['Longitude']
+    
+    latWater= cropAir['Latitude']
+    lonWater = cropAir['Longitude']
+    
+    latGround= cropData['Latitude']
+    lonGround = cropData['Longitude'] 
+    
+    for c, la, lo in zip(locKin, latFire, lonFire):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =33000, 
+                                     color ="red",
+                                     weight = 1,
+                                     fill_color="red",
+                                     fill_opacity = 0.4
+                                     ).add_to(mElement) 
+        
+    for c, la, lo in zip(locKin, latAir, lonAir):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =33000, 
+                                     color ="white",
+                                     weight = 1,
+                                     fill_color="white",
+                                     fill_opacity = 0.3
+                                     ).add_to(mElement)  
+        
+    for c, la, lo in zip(locKin, latWater, lonWater):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =33000, 
+                                     color ="blue",
+                                     weight = 1,
+                                     fill_color="blue",
+                                     fill_opacity = 0.2
+                                     ).add_to(mElement)      
+    
+    for c, la, lo in zip(locKin, latGround, lonGround):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =14000, 
+                                     color ="yellow",
+                                     weight = 1,
+                                     fill_color="yellow",
+                                     fill_opacity = 0.1
+                                     ).add_to(mElement)   
+        
     #Desenhar no mapa   
+    folium_static(m) 
     #Draw().add_to(m)
     ###################################################################
-        
+    for c, la, lo in zip(loc, lat, lon):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =33000, 
+                                     color ="black",
+                                     weight = 1,
+                                     fill_color="blue",
+                                     fill_opacity = 0.1
+                                     ).add_to(m)    
+    
+    
+    
+    
+    folium_static(mElement)      
     #####################################################################
     #Gráficos
         
@@ -1689,13 +1830,19 @@ def main():
     #Título do site
     st.title("Localização dos Crop Circles")
     
-    #Mapa Principal    
-    folium_static(m)  
+      
+     
+    
     #Gráfico em Pizza de Crops por País
     pieCountryCrops
     #Gráfico de Barras - Crops por Ano        
     yearCropsBar    
     #dataset   
+    cropFire
+    cropAir
+    cropWater
+    cropGround
+    cropElements
     cropData        
     ##################################################################
 if __name__ == "__main__":
