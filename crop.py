@@ -280,7 +280,14 @@ def StampKin(kin):
         stamp = "Sun"
     
     return stamp
-
+def Portal(kin):
+    
+    if kin==1 or kin==20 or kin==22 or kin==39 or kin==43 or kin==50 or kin==51 or kin==58 or kin==64 or kin==69 or kin==72 or kin==77 or kin==85 or kin==88 or kin==93 or kin==96 or kin==106 or kin==107 or kin==108 or kin==109 or kin==110 or kin==111 or kin==112 or kin==113 or kin==114 or kin==115 or kin==146 or kin==147 or kin==149 or kin==150 or kin==151 or kin==152 or kin==153 or kin==154 or kin==155 or kin==165 or kin==168 or kin==173 or kin==176 or kin==184 or kin==189 or kin==192 or kin==197 or kin==203 or kin==210 or kin==211 or kin==218 or kin==222 or kin==239 or kin==241 or kin==260:
+        gate = "Yes"
+    else:
+        gate = "No"
+        
+    return gate
 
 def AngelsNum(mes, dia):
     angelNum = 0
@@ -1655,8 +1662,28 @@ def AngelsNam(angelNum):
         angelNam ="Mumiah"
          
     return angelNam
-
-
+def AngelsHierarchy(angelNum):
+    if angelNum <= 8:
+        hierarchy = "Serafins"
+    elif angelNum <= 16:
+        hierarchy = "Cherubins"
+    elif angelNum <= 24:
+        hierarchy = "Ophanim"
+    elif angelNum <= 32:
+        hierarchy = "Dominions"
+    elif angelNum <= 40:
+        hierarchy = "Powers"
+    elif angelNum <= 48:
+        hierarchy = "Virtues"
+    elif angelNum <= 56:
+        hierarchy = "Rulers"
+    elif angelNum <= 64:
+        hierarchy = "Archangels"
+    else:
+        hierarchy = "Angels"
+        
+    return hierarchy
+        
 def main():    
     ###################################################
     #Criando as tabelas    
@@ -1672,7 +1699,9 @@ def main():
                    attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
     mElement = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                    attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
-    
+    mPortal = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
+
     #Controle de Camadas
     #folium.LayerControl(position="topleft").add_to(m)
             
@@ -1697,16 +1726,21 @@ def main():
     #Coluna dos Selos Maia
     cropData["Stamp"]= cropData.apply(lambda row: StampKin(row["Kin"]), axis=1)
     
+    #Coluna dos 52 Portais Maia
+    cropData["Gate"] = cropData.apply(lambda row: Portal(row["Kin"]), axis=1)
+    
     #Coluna dos 72 anjos - Números    
     cropData["Angel Number"] = cropData.apply(lambda row: AngelsNum(row["Month"],row["Day"]), axis=1 )
     
     #Coluna dos 72 anjos - Nomes    
     cropData["Angel Names"] = cropData.apply(lambda row: AngelsNam(row["Angel Number"]), axis=1 )
     
+    #Coluna das 9 hierarquias angelicais
+    cropData["Hierarchy"] = cropData.apply(lambda row: AngelsHierarchy(row["Angel Number"]),axis=1 )
     #######################################################
     
     #Tabela elementos kin    
-    cropElements = cropData[["Kin","Element Kin","Stamp","Latitude","Longitude"]]
+    cropElements = cropData[["Kin","Element Kin","Stamp","Gate","Latitude","Longitude","Link","Image"]]
     
     #Tabela Fogo
     cropFireTrue = (cropElements["Element Kin"] == "Fire")
@@ -1724,8 +1758,25 @@ def main():
     cropGroundTrue = (cropElements["Element Kin"] == "Ground")
     cropGround = cropElements[cropGroundTrue]
     
+    #Tabela Portal
+    cropGateTrue = (cropElements["Gate"] == "Yes")
+    cropGate = cropElements[cropGateTrue]
     
+    #Tabela Fogo
+    cropFireGateTrue = (cropGate["Element Kin"] == "Fire")
+    cropGateFire = cropGate[cropFireGateTrue]
     
+    #Tabela Portal Ar
+    cropAirGateTrue = (cropGate["Element Kin"] == "Air")
+    cropGateAir = cropGate[cropAirGateTrue]
+    
+    #Tabela Portal Água
+    cropWaterGateTrue = (cropGate["Element Kin"] == "Water")
+    cropGateWater = cropGate[cropWaterGateTrue]
+    
+    #Tabela Portal Terra
+    cropGroundGateTrue = (cropGate["Element Kin"] == "Ground")
+    cropGateGround = cropGate[cropGroundGateTrue]
     
     
     ######################################################################
@@ -1736,22 +1787,44 @@ def main():
     ########################################################################
        
     ############################################################
-    #Localizações dos Crops no mapa
-    locKin=cropData['Locate']
-    
+    #Localizações dos Crops no mapa        
     latFire= cropFire['Latitude']
     lonFire = cropFire['Longitude'] 
+    kinFire = cropFire["Kin"]    
     
     latAir= cropAir['Latitude']
     lonAir = cropAir['Longitude']
+    kinAir = cropAir["Kin"]
     
-    latWater= cropAir['Latitude']
-    lonWater = cropAir['Longitude']
+    latWater= cropWater['Latitude']
+    lonWater = cropWater['Longitude']
+    kinWater = cropWater["Kin"]
     
-    latGround= cropData['Latitude']
-    lonGround = cropData['Longitude'] 
+    latGround= cropGround['Latitude']
+    lonGround = cropGround['Longitude'] 
+    kinGround = cropGround["Kin"]
     
-    for c, la, lo in zip(locKin, latFire, lonFire):
+    latGate= cropGate['Latitude']
+    lonGate = cropGate['Longitude'] 
+    kinGate = cropGate["Kin"]
+    
+    latGateFire= cropGateFire['Latitude']
+    lonGateFire = cropGateFire['Longitude'] 
+    kinGateFire = cropGateFire["Kin"]    
+    
+    latGateAir= cropGateAir['Latitude']
+    lonGateAir = cropGateAir['Longitude']
+    kinGateAir = cropGateAir["Kin"]
+    
+    latGateWater= cropGateWater['Latitude']
+    lonGateWater = cropGateWater['Longitude']
+    kinGateWater = cropGateWater["Kin"]
+    
+    latGateGround= cropGateGround['Latitude']
+    lonGateGround = cropGateGround['Longitude'] 
+    kinGateGround = cropGateGround["Kin"]
+    
+    for c, la, lo in zip(kinFire, latFire, lonFire):
         folium.Circle([la,lo], tooltip=c,
                                      radius =33000, 
                                      color ="red",
@@ -1760,7 +1833,7 @@ def main():
                                      fill_opacity = 0.4
                                      ).add_to(mElement) 
         
-    for c, la, lo in zip(locKin, latAir, lonAir):
+    for c, la, lo in zip(kinAir, latAir, lonAir):
         folium.Circle([la,lo], tooltip=c,
                                      radius =33000, 
                                      color ="white",
@@ -1769,7 +1842,7 @@ def main():
                                      fill_opacity = 0.3
                                      ).add_to(mElement)  
         
-    for c, la, lo in zip(locKin, latWater, lonWater):
+    for c, la, lo in zip(kinWater, latWater, lonWater):
         folium.Circle([la,lo], tooltip=c,
                                      radius =33000, 
                                      color ="blue",
@@ -1778,18 +1851,59 @@ def main():
                                      fill_opacity = 0.2
                                      ).add_to(mElement)      
     
-    for c, la, lo in zip(locKin, latGround, lonGround):
+    for c, la, lo in zip(kinGround, latGround, lonGround):
         folium.Circle([la,lo], tooltip=c,
-                                     radius =14000, 
+                                     radius =33000, 
                                      color ="yellow",
                                      weight = 1,
                                      fill_color="yellow",
                                      fill_opacity = 0.1
                                      ).add_to(mElement)   
         
+    #Localizões dos Portais no Mapa
+    
+    for c, la, lo in zip(kinGateFire, latGateFire, lonGateFire):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =52000, 
+                                     color ="red",
+                                     weight = 1,
+                                     fill_color="red",
+                                     fill_opacity = 0.4
+                                     ).add_to(mPortal) 
+        
+    for c, la, lo in zip(kinGateAir, latGateAir, lonGateAir):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =52000, 
+                                     color ="white",
+                                     weight = 1,
+                                     fill_color="white",
+                                     fill_opacity = 0.3
+                                     ).add_to(mPortal)  
+        
+    for c, la, lo in zip(kinGateWater, latGateWater, lonGateWater):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =52000, 
+                                     color ="blue",
+                                     weight = 1,
+                                     fill_color="blue",
+                                     fill_opacity = 0.2
+                                     ).add_to(mPortal)      
+    
+    for c, la, lo in zip(kinGateGround, latGateGround, lonGateGround):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =52000, 
+                                     color ="yellow",
+                                     weight = 1,
+                                     fill_color="yellow",
+                                     fill_opacity = 0.1
+                                     ).add_to(mPortal) 
+        
+    
+        
     #Desenhar no mapa   
+        
     folium_static(m) 
-    #Draw().add_to(m)
+    
     ###################################################################
     for c, la, lo in zip(loc, lat, lon):
         folium.Circle([la,lo], tooltip=c,
@@ -1799,11 +1913,10 @@ def main():
                                      fill_color="blue",
                                      fill_opacity = 0.1
                                      ).add_to(m)    
+      
     
-    
-    
-    
-    folium_static(mElement)      
+    folium_static(mElement)   
+    folium_static(mPortal)   
     #####################################################################
     #Gráficos
         
@@ -1829,20 +1942,13 @@ def main():
     st.write(Kin(ano=anoA,mes=mesA,dia=diaA))
     #Título do site
     st.title("Localização dos Crop Circles")
-    
-      
-     
-    
+        
     #Gráfico em Pizza de Crops por País
     pieCountryCrops
     #Gráfico de Barras - Crops por Ano        
     yearCropsBar    
     #dataset   
-    cropFire
-    cropAir
-    cropWater
-    cropGround
-    cropElements
+    cropGate
     cropData        
     ##################################################################
 if __name__ == "__main__":
