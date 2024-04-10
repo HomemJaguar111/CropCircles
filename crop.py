@@ -1684,6 +1684,8 @@ def AngelsHierarchy(angelNum):
         
     return hierarchy
         
+
+
 def main():    
     ###################################################
     #Criando as tabelas    
@@ -1759,8 +1761,8 @@ def main():
     cropGround = cropElements[cropGroundTrue]
     
     #Tabela Portal
-    cropGateTrue = (cropElements["Gate"] == "Yes")
-    cropGate = cropElements[cropGateTrue]
+    cropGateTrue = (cropData["Gate"] == "Yes")
+    cropGate = cropData[cropGateTrue]
     
     #Tabela Fogo
     cropFireGateTrue = (cropGate["Element Kin"] == "Fire")
@@ -1804,9 +1806,9 @@ def main():
     lonGround = cropGround['Longitude'] 
     kinGround = cropGround["Kin"]
     
-    latGate= cropGate['Latitude']
-    lonGate = cropGate['Longitude'] 
-    kinGate = cropGate["Kin"]
+    # latGate= cropGate['Latitude']
+    # lonGate = cropGate['Longitude'] 
+    # kinGate = cropGate["Kin"]
     
     latGateFire= cropGateFire['Latitude']
     lonGateFire = cropGateFire['Longitude'] 
@@ -1860,7 +1862,7 @@ def main():
                                      fill_opacity = 0.1
                                      ).add_to(mElement)   
         
-    #Localizões dos Portais no Mapa
+    #Localizações dos Portais no Mapa
     
     for c, la, lo in zip(kinGateFire, latGateFire, lonGateFire):
         folium.Circle([la,lo], tooltip=c,
@@ -1900,9 +1902,9 @@ def main():
         
     
         
-    #Desenhar no mapa   
+     
         
-    folium_static(m) 
+   
     
     ###################################################################
     for c, la, lo in zip(loc, lat, lon):
@@ -1914,11 +1916,17 @@ def main():
                                      fill_opacity = 0.1
                                      ).add_to(m)    
       
-    
-    folium_static(mElement)   
-    folium_static(mPortal)   
+     
     #####################################################################
-    #Gráficos
+    
+            #Indicadores
+            
+   
+            
+            
+            
+            
+            #Gráficos    
         
     #Gráfico em Pizza dos Paízes
     cropCountry = cropData['Country'].value_counts()
@@ -1926,6 +1934,23 @@ def main():
                   values=cropCountry.values, 
                   names=cropCountry.index, 
                   title='Crop Circles por país')
+    
+    # Portais por país
+    
+    
+    
+    
+    
+    #Portais por Ano
+    
+    
+    
+    
+    
+    #
+    
+    
+    
     
     # Gráfico em Barra - Crops por Ano     
     yearCrops = cropData[["Year","Country"]].value_counts().reset_index()
@@ -1936,13 +1961,38 @@ def main():
                        title="Crops em cada ano")
     
     #########################################################################
-   
+    #Quantidade de Crops    
+    
+    totalCrops = cropData.shape[0]   
+    #Quantidade de Portais
+    totalGate = cropGate.shape[0]      
+    #Quantidade de Portais Fogo/Plasma
+    totalGateFire = cropGateFire.shape[0]    
+    #Quantidade de Portais Ar/Gás
+    totalGateAir = cropGateAir.shape[0]    
+    #Quantidade ee Portais Água/Líquido
+    totalGateWater = cropGateWater.shape[0]    
+    #Quantidade de Portais Terra/Sólido
+    totalGateGround = cropGateGround.shape[0]
     #############################################################
+    #Parâmetros do Site
+    col1, col2, col3, col4, col5, col6 = st.columns(6)
+        
     #Chamadas no Site
-    st.write(Kin(ano=anoA,mes=mesA,dia=diaA))
     #Título do site
     st.title("Localização dos Crop Circles")
-        
+    
+    st.write(Kin(ano=anoA,mes=mesA,dia=diaA))
+    col1.metric(label="Total Crops", value=totalCrops)
+    col2.metric(label="Total Gates", value=totalGate)
+    col3.metric(label="Total Fire Gates", value=totalGateFire)
+    col4.metric(label="Total Air Gates", value=totalGateAir)
+    col5.metric(label="Total Water Gates", value=totalGateWater)
+    col6.metric(label="Total Ground Gates", value=totalGateGround)
+    #Mapas
+    folium_static(m) 
+    folium_static(mElement)   
+    folium_static(mPortal)    
     #Gráfico em Pizza de Crops por País
     pieCountryCrops
     #Gráfico de Barras - Crops por Ano        
