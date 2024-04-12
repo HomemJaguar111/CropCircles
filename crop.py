@@ -1703,6 +1703,10 @@ def main():
                    attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
     mPortal = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                    attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
+    mAngels = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
+    mPortalAngels =folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
 
     #Controle de Camadas
     #folium.LayerControl(position="topleft").add_to(m)
@@ -1780,7 +1784,42 @@ def main():
     cropGroundGateTrue = (cropGate["Element Kin"] == "Ground")
     cropGateGround = cropGate[cropGroundGateTrue]
     
+    #Tabela dos Serafins
+    cropSerafinTrue = (cropData["Hierarchy"]=="Serafins")
+    cropSerafin = cropData[cropSerafinTrue]
     
+    #Tabela dos Cherubins
+    cropCherubinTrue = (cropData["Hierarchy"]=="Cherubins")
+    cropCherubin = cropData[cropCherubinTrue]
+    
+    #Tabela dos Ophanim
+    cropOphanimTrue = (cropData["Hierarchy"]=="Ophanim")
+    cropOphanim = cropData[cropOphanimTrue]
+
+    #Tabela dos Dominions
+    cropDominionTrue = (cropData["Hierarchy"]=="Dominions")
+    cropDominion = cropData[cropDominionTrue]
+    
+    #Tabela dos Powers
+    cropPowerTrue = (cropData["Hierarchy"]=="Powers")
+    cropPower = cropData[cropPowerTrue]
+    
+    #Tabela dos Virtues
+    cropVirtueTrue = (cropData["Hierarchy"]=="Virtues")
+    cropVirtue = cropData[cropVirtueTrue]
+    
+    #Tabela dos Rulers
+    cropRulerTrue = (cropData["Hierarchy"]=="Rulers")
+    cropRuler = cropData[cropRulerTrue]
+    
+    #Tabela dos Archangels
+    cropArchangelTrue = (cropData["Hierarchy"]=="Archangels")
+    cropArchangel = cropData[cropArchangelTrue]
+    
+    #Tabela dos Angels
+    cropAngelTrue = (cropData["Hierarchy"]=="Angels")
+    cropAngel = cropData[cropAngelTrue]
+            
     ######################################################################
     #Adicionando função de calor no mapa
     coordTotal = cropData[["Latitude","Longitude"]].values.tolist()
@@ -1992,12 +2031,23 @@ def main():
     #Mapas
     folium_static(m) 
     folium_static(mElement)   
-    folium_static(mPortal)    
+    folium_static(mPortal) 
+    folium_static(mAngels)   
+    folium_static(mPortalAngels)     
     #Gráfico em Pizza de Crops por País
     pieCountryCrops
     #Gráfico de Barras - Crops por Ano        
     yearCropsBar    
     #dataset   
+    cropSerafin
+    cropCherubin
+    cropOphanim
+    cropDominion
+    cropPower
+    cropVirtue
+    cropRuler
+    cropArchangel
+    cropAngel
     cropGate
     cropData        
     ##################################################################
