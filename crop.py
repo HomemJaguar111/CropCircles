@@ -11,7 +11,9 @@ import plotly.express as px
 import pandas as pd
 
 st.set_page_config(layout='wide')
-       
+
+#Título do Site
+st.title("Localização dos Crop Circles")       
     ###############################################      
 tempo = datetime.now()
 anoA = tempo.year
@@ -1980,7 +1982,7 @@ def main():
     
     
     
-    #Portais por Ano
+    
     
     
     
@@ -2018,9 +2020,7 @@ def main():
     col1, col2, col3, col4, col5, col6 = st.columns(6)
         
     #Chamadas no Site
-    #Título do site
-    st.title("Localização dos Crop Circles")
-    
+        
     st.write(Kin(ano=anoA,mes=mesA,dia=diaA))
     col1.metric(label="Total Crops", value=totalCrops)
     col2.metric(label="Total Gates", value=totalGate)
@@ -2038,6 +2038,7 @@ def main():
     pieCountryCrops
     #Gráfico de Barras - Crops por Ano        
     yearCropsBar    
+    st.dataframe(cropData)
     #dataset   
     cropSerafin
     cropCherubin
