@@ -13,7 +13,20 @@ import pandas as pd
 st.set_page_config(layout='wide')
 
 #Título do Site
-st.title("Localização dos Crop Circles")       
+st.title("Localização dos Crop Circles")   
+
+#Mapas 
+m = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True) 
+mElement = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
+mPortal = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
+mAngels = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
+mPortalAngels =folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
+    
     ###############################################      
 tempo = datetime.now()
 anoA = tempo.year
@@ -1694,34 +1707,12 @@ def main():
     
     #Tabela CropCircles
     cropData= pd.read_csv('CropCircles.csv') 
-    
-   
-    
-    
-    #Mapa Definido  ###############################################
-    m = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
-    mElement = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
-    mPortal = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
-    mAngels = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
-    mPortalAngels =folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                   attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
-
+     
     #Controle de Camadas
     #folium.LayerControl(position="topleft").add_to(m)
             
     ###############################################################
-     #Coordenadas
-    loc=cropData['Locate']
-    lat= cropData['Latitude']
-    lon = cropData['Longitude']   
-    
-    #################################################################
-   
-    
+      
     ########################################################
     #Inserindo novas colunas na tabela
     
@@ -1786,6 +1777,10 @@ def main():
     cropGroundGateTrue = (cropGate["Element Kin"] == "Ground")
     cropGateGround = cropGate[cropGroundGateTrue]
     
+    
+    
+    
+    
     #Tabela dos Serafins
     cropSerafinTrue = (cropData["Hierarchy"]=="Serafins")
     cropSerafin = cropData[cropSerafinTrue]
@@ -1830,22 +1825,75 @@ def main():
     ########################################################################
        
     ############################################################
-    #Localizações dos Crops no mapa        
+    #Localizações dos Crops no mapa  
+     
+    # All Crops
+    loc=cropData['Locate']
+    lat= cropData['Latitude']
+    lon = cropData['Longitude']   
+    
+    for c, la, lo in zip(loc, lat, lon):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =33000, 
+                                     color ="black",
+                                     weight = 1,
+                                     fill_color="blue",
+                                     fill_opacity = 0.1
+                                     ).add_to(m) 
+     
+# Classificação Maia dos Crops
+        
     latFire= cropFire['Latitude']
     lonFire = cropFire['Longitude'] 
     kinFire = cropFire["Kin"]    
+    
+    for c, la, lo in zip(kinFire, latFire, lonFire):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =33000, 
+                                     color ="red",
+                                     weight = 1,
+                                     fill_color="red",
+                                     fill_opacity = 0.4
+                                     ).add_to(mElement)
     
     latAir= cropAir['Latitude']
     lonAir = cropAir['Longitude']
     kinAir = cropAir["Kin"]
     
+    for c, la, lo in zip(kinAir, latAir, lonAir):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =33000, 
+                                     color ="white",
+                                     weight = 1,
+                                     fill_color="white",
+                                     fill_opacity = 0.3
+                                     ).add_to(mElement)
+    
     latWater= cropWater['Latitude']
     lonWater = cropWater['Longitude']
     kinWater = cropWater["Kin"]
     
+    for c, la, lo in zip(kinWater, latWater, lonWater):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =33000, 
+                                     color ="blue",
+                                     weight = 1,
+                                     fill_color="blue",
+                                     fill_opacity = 0.2
+                                     ).add_to(mElement)
+    
     latGround= cropGround['Latitude']
     lonGround = cropGround['Longitude'] 
     kinGround = cropGround["Kin"]
+    
+    for c, la, lo in zip(kinGround, latGround, lonGround):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =33000, 
+                                     color ="yellow",
+                                     weight = 1,
+                                     fill_color="yellow",
+                                     fill_opacity = 0.1
+                                     ).add_to(mElement) 
     
     # latGate= cropGate['Latitude']
     # lonGate = cropGate['Longitude'] 
@@ -1855,56 +1903,6 @@ def main():
     lonGateFire = cropGateFire['Longitude'] 
     kinGateFire = cropGateFire["Kin"]    
     
-    latGateAir= cropGateAir['Latitude']
-    lonGateAir = cropGateAir['Longitude']
-    kinGateAir = cropGateAir["Kin"]
-    
-    latGateWater= cropGateWater['Latitude']
-    lonGateWater = cropGateWater['Longitude']
-    kinGateWater = cropGateWater["Kin"]
-    
-    latGateGround= cropGateGround['Latitude']
-    lonGateGround = cropGateGround['Longitude'] 
-    kinGateGround = cropGateGround["Kin"]
-    
-    for c, la, lo in zip(kinFire, latFire, lonFire):
-        folium.Circle([la,lo], tooltip=c,
-                                     radius =33000, 
-                                     color ="red",
-                                     weight = 1,
-                                     fill_color="red",
-                                     fill_opacity = 0.4
-                                     ).add_to(mElement) 
-        
-    for c, la, lo in zip(kinAir, latAir, lonAir):
-        folium.Circle([la,lo], tooltip=c,
-                                     radius =33000, 
-                                     color ="white",
-                                     weight = 1,
-                                     fill_color="white",
-                                     fill_opacity = 0.3
-                                     ).add_to(mElement)  
-        
-    for c, la, lo in zip(kinWater, latWater, lonWater):
-        folium.Circle([la,lo], tooltip=c,
-                                     radius =33000, 
-                                     color ="blue",
-                                     weight = 1,
-                                     fill_color="blue",
-                                     fill_opacity = 0.2
-                                     ).add_to(mElement)      
-    
-    for c, la, lo in zip(kinGround, latGround, lonGround):
-        folium.Circle([la,lo], tooltip=c,
-                                     radius =33000, 
-                                     color ="yellow",
-                                     weight = 1,
-                                     fill_color="yellow",
-                                     fill_opacity = 0.1
-                                     ).add_to(mElement)   
-        
-    #Localizações dos Portais no Mapa
-    
     for c, la, lo in zip(kinGateFire, latGateFire, lonGateFire):
         folium.Circle([la,lo], tooltip=c,
                                      radius =52000, 
@@ -1912,8 +1910,12 @@ def main():
                                      weight = 1,
                                      fill_color="red",
                                      fill_opacity = 0.4
-                                     ).add_to(mPortal) 
-        
+                                     ).add_to(mPortal)
+    
+    latGateAir= cropGateAir['Latitude']
+    lonGateAir = cropGateAir['Longitude']
+    kinGateAir = cropGateAir["Kin"]
+    
     for c, la, lo in zip(kinGateAir, latGateAir, lonGateAir):
         folium.Circle([la,lo], tooltip=c,
                                      radius =52000, 
@@ -1921,8 +1923,12 @@ def main():
                                      weight = 1,
                                      fill_color="white",
                                      fill_opacity = 0.3
-                                     ).add_to(mPortal)  
-        
+                                     ).add_to(mPortal)
+    
+    latGateWater= cropGateWater['Latitude']
+    lonGateWater = cropGateWater['Longitude']
+    kinGateWater = cropGateWater["Kin"]
+    
     for c, la, lo in zip(kinGateWater, latGateWater, lonGateWater):
         folium.Circle([la,lo], tooltip=c,
                                      radius =52000, 
@@ -1930,7 +1936,11 @@ def main():
                                      weight = 1,
                                      fill_color="blue",
                                      fill_opacity = 0.2
-                                     ).add_to(mPortal)      
+                                     ).add_to(mPortal) 
+    
+    latGateGround= cropGateGround['Latitude']
+    lonGateGround = cropGateGround['Longitude'] 
+    kinGateGround = cropGateGround["Kin"]
     
     for c, la, lo in zip(kinGateGround, latGateGround, lonGateGround):
         folium.Circle([la,lo], tooltip=c,
@@ -1939,34 +1949,132 @@ def main():
                                      weight = 1,
                                      fill_color="yellow",
                                      fill_opacity = 0.1
-                                     ).add_to(mPortal) 
+                                     ).add_to(mPortal)  
         
-    
-        
-     
-        
+   #Classificação angelical dos crops
    
+    latSeraphin= cropSerafin['Latitude']
+    lonSeraphin = cropSerafin['Longitude'] 
+    nameAngel = cropSerafin["Angel Names"]
     
-    ###################################################################
-    for c, la, lo in zip(loc, lat, lon):
+    for c, la, lo in zip(nameAngel, latSeraphin, lonSeraphin):
         folium.Circle([la,lo], tooltip=c,
-                                     radius =33000, 
-                                     color ="black",
+                                     radius =52000, 
+                                     color ="white",
+                                     weight = 1,
+                                     fill_color="white",
+                                     fill_opacity = 0.1
+                                     ).add_to(mAngels)  
+    
+    latCherubin= cropCherubin['Latitude']
+    lonCherubin = cropCherubin['Longitude'] 
+    nameAngel = cropCherubin["Angel Names"]
+    
+    for c, la, lo in zip(nameAngel, latCherubin, lonCherubin):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =52000, 
+                                     color ="blue",
                                      weight = 1,
                                      fill_color="blue",
                                      fill_opacity = 0.1
-                                     ).add_to(m)    
-      
-     
-    #####################################################################
-    
-            #Indicadores
-            
+                                     ).add_to(mAngels)    
    
-            
-            
-            
-            
+    latOphanim= cropOphanim['Latitude']
+    lonOphanim = cropOphanim['Longitude'] 
+    nameAngel = cropOphanim["Angel Names"]
+    
+    for c, la, lo in zip(nameAngel, latOphanim, lonOphanim):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =52000, 
+                                     color ="red",
+                                     weight = 1,
+                                     fill_color="red",
+                                     fill_opacity = 0.1
+                                     ).add_to(mAngels) 
+        
+    latDominion= cropDominion['Latitude']
+    lonDominion = cropDominion['Longitude'] 
+    nameAngel = cropDominion["Angel Names"]
+    
+    for c, la, lo in zip(nameAngel, latDominion, lonDominion):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =52000, 
+                                     color ="yellow",
+                                     weight = 1,
+                                     fill_color="yellow",
+                                     fill_opacity = 0.1
+                                     ).add_to(mAngels) 
+        
+    latPower= cropPower['Latitude']
+    lonPower = cropPower['Longitude'] 
+    nameAngel = cropPower["Angel Names"]
+    
+    for c, la, lo in zip(nameAngel, latPower, lonPower):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =52000, 
+                                     color ="green",
+                                     weight = 1,
+                                     fill_color="green",
+                                     fill_opacity = 0.1
+                                     ).add_to(mAngels) 
+        
+    latVirtue= cropVirtue['Latitude']
+    lonVirtue = cropVirtue['Longitude'] 
+    nameAngel = cropVirtue["Angel Names"]
+    
+    for c, la, lo in zip(nameAngel, latVirtue, lonVirtue):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =52000, 
+                                     color ="pink",
+                                     weight = 1,
+                                     fill_color="pink",
+                                     fill_opacity = 0.1
+                                     ).add_to(mAngels) 
+        
+    latRuler= cropRuler['Latitude']
+    lonRuler = cropRuler['Longitude'] 
+    nameAngel = cropRuler["Angel Names"]
+    
+    for c, la, lo in zip(nameAngel, latRuler, lonRuler):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =52000, 
+                                     color ="purple",
+                                     weight = 1,
+                                     fill_color="purple",
+                                     fill_opacity = 0.1
+                                     ).add_to(mAngels) 
+        
+    latArchangel= cropArchangel['Latitude']
+    lonArchangel = cropArchangel['Longitude'] 
+    nameAngel = cropArchangel["Angel Names"]
+    
+    for c, la, lo in zip(nameAngel, latArchangel, lonArchangel):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =52000, 
+                                     color ="black",
+                                     weight = 1,
+                                     fill_color="black",
+                                     fill_opacity = 0.1
+                                     ).add_to(mAngels)
+    
+    latAngel= cropAngel['Latitude']
+    lonAngel = cropAngel['Longitude'] 
+    nameAngel = cropAngel["Angel Names"]
+    
+    for c, la, lo in zip(nameAngel, latAngel, lonAngel):
+        folium.Circle([la,lo], tooltip=c,
+                                     radius =52000, 
+                                     color ="grey",
+                                     weight = 1,
+                                     fill_color="grey",
+                                     fill_opacity = 0.1
+                                     ).add_to(mAngels)
+        
+    
+    ###################################################################
+           
+    #####################################################################
+                
             #Gráficos    
         
     #Gráfico em Pizza dos Paízes
@@ -1975,22 +2083,6 @@ def main():
                   values=cropCountry.values, 
                   names=cropCountry.index, 
                   title='Crop Circles por país')
-    
-    # Portais por país
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    #
-    
-    
     
     
     # Gráfico em Barra - Crops por Ano     
@@ -2038,7 +2130,7 @@ def main():
     pieCountryCrops
     #Gráfico de Barras - Crops por Ano        
     yearCropsBar    
-    st.dataframe(cropData)
+    
     #dataset   
     cropSerafin
     cropCherubin
