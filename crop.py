@@ -16,13 +16,13 @@ st.set_page_config(layout='wide')
 st.title("Localização dos Crop Circles")   
 
 #Mapas 
-m = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+m = folium.Map(location=[52.19681,0.12901],zoom_start=7,tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                    attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True) 
 mElement = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                    attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
 mPortal = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                    attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
-mAngels = folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+mAngels = folium.Map(location=[51.42692,18.93166],zoom_start=4.1,tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                    attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
 mPortalAngels =folium.Map(tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                    attr='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',control_scale=True)  
@@ -1835,9 +1835,9 @@ def main():
     for c, la, lo in zip(loc, lat, lon):
         folium.Circle([la,lo], tooltip=c,
                                      radius =33000, 
-                                     color ="black",
+                                     color ="white",
                                      weight = 1,
-                                     fill_color="blue",
+                                     #fill_color="blue",
                                      fill_opacity = 0.1
                                      ).add_to(m) 
      
@@ -2092,7 +2092,13 @@ def main():
                        y="count",
                        color="Country",
                        title="Crops em cada ano")
-    
+     # Gráfico em Barra - Anjos por Ano     
+    yearAngels = cropData[["Year","Hierarchy"]].value_counts().reset_index()
+    yearAngelsBar = px.bar(yearAngels, 
+                       x="Year",
+                       y="count",
+                       color="Hierarchy",
+                       title="Anjos em cada ano")
     #########################################################################
     #Quantidade de Crops    
     
@@ -2113,35 +2119,46 @@ def main():
         
     #Chamadas no Site
         
-    st.write(Kin(ano=anoA,mes=mesA,dia=diaA))
+    #st.write(Kin(ano=anoA,mes=mesA,dia=diaA))
+    
+    #Mapas
+    
+    st.header("Mapa de calor com todos os círculos")
+    folium_static(m) 
+    yearCropsBar   
+    
+    st.header("Classificação Angelical dos Crops no Mapa - Hierarquia")
+    folium_static(mAngels)
+    yearAngelsBar
+    
+    #folium_static(mPortalAngels)   
+    #folium_static(mElement)   
+    #folium_static(mPortal) 
+       
+      
     col1.metric(label="Total Crops", value=totalCrops)
     col2.metric(label="Total Gates", value=totalGate)
     col3.metric(label="Total Fire Gates", value=totalGateFire)
     col4.metric(label="Total Air Gates", value=totalGateAir)
     col5.metric(label="Total Water Gates", value=totalGateWater)
     col6.metric(label="Total Ground Gates", value=totalGateGround)
-    #Mapas
-    folium_static(m) 
-    folium_static(mElement)   
-    folium_static(mPortal) 
-    folium_static(mAngels)   
-    folium_static(mPortalAngels)     
     #Gráfico em Pizza de Crops por País
     pieCountryCrops
     #Gráfico de Barras - Crops por Ano        
-    yearCropsBar    
+     
+    
     
     #dataset   
-    cropSerafin
-    cropCherubin
-    cropOphanim
-    cropDominion
-    cropPower
-    cropVirtue
-    cropRuler
-    cropArchangel
-    cropAngel
-    cropGate
+    # cropSerafin
+    # cropCherubin
+    # cropOphanim
+    # cropDominion
+    # cropPower
+    # cropVirtue
+    # cropRuler
+    # cropArchangel
+    # cropAngel
+    # cropGate
     cropData        
     ##################################################################
 if __name__ == "__main__":
