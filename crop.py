@@ -1698,9 +1698,7 @@ def AngelsHierarchy(angelNum):
         hierarchy = "Angels"
         
     return hierarchy
-        
-
-
+    
 def main():    
     ###################################################
     #Criando as tabelas    
@@ -2092,13 +2090,21 @@ def main():
                        y="count",
                        color="Country",
                        title="Crops em cada ano")
-     # Gráfico em Barra - Anjos por Ano     
+    # Gráfico em Barra - Anjos por Ano     
     yearAngels = cropData[["Year","Hierarchy"]].value_counts().reset_index()
     yearAngelsBar = px.bar(yearAngels, 
                        x="Year",
                        y="count",
                        color="Hierarchy",
                        title="Anjos em cada ano")
+    
+    # Gráfico em Barra - Anjos por Mês     
+    yearMonth = cropData[["Year","Month"]].value_counts().reset_index()
+    yearMonthBar = px.bar(yearMonth, 
+                       x="Year",
+                       y="count",
+                       color="Month",
+                       title="Ano/Mês")
     #########################################################################
     #Quantidade de Crops    
     
@@ -2125,7 +2131,9 @@ def main():
     
     st.header("Mapa de calor com todos os círculos")
     folium_static(m) 
-    yearCropsBar   
+    yearCropsBar
+    
+    yearMonthBar   
     
     st.header("Classificação Angelical dos Crops no Mapa - Hierarquia")
     folium_static(mAngels)
@@ -2163,3 +2171,4 @@ def main():
     ##################################################################
 if __name__ == "__main__":
     main()
+    
