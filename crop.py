@@ -1704,8 +1704,7 @@ def main():
     #Criando as tabelas    
     
     #Tabela CropCircles
-    cropData= pd.read_csv('CropCircles.csv') 
-     
+    cropData= pd.read_csv('CropCircles.csv')      
     #Controle de Camadas
     #folium.LayerControl(position="topleft").add_to(m)
             
